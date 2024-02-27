@@ -17,15 +17,17 @@ package org.thingml.rtcharts.swing;
 
 public class GraphBuffer implements GraphBufferInterface {
 
-    private int[] graphData;
+//    private int[] graphData;
    // private int size;
     private DataBuffer data;
+    
+    private int column = 0;
 
     public int getSize() {
         return data.getRows();
     }
-    private int notValidNumber = Integer.MIN_VALUE;
-    private int counter = 0;
+//    private int notValidNumber = Integer.MIN_VALUE;
+//    private int counter = 0;
 
     public GraphBuffer() {
         data = new DataBuffer(1, 100);
@@ -35,19 +37,31 @@ public class GraphBuffer implements GraphBufferInterface {
         data = new DataBuffer(1, customSize);
     }
 
+    public GraphBuffer(int customCols, int customSize) {
+        data = new DataBuffer(customCols, customSize);
+    }
+    
     @Override
     public synchronized int[] getGraphData() {
-        return data.getColumnClone(0);
+        return data.getColumnClone(column);
     }
     
     public synchronized void setGraphData(int[] new_data) {
         data = new DataBuffer(1, new_data.length);
-        data.setDataColumn(0, new_data);
+        data.setDataColumn(column, new_data);
+    }
+    
+    public void setColumn(int v) {
+    	column = v;
     }
 
     @Override
     public synchronized boolean insertData(int value) {
         return data.appendDataRow(new int[]{value});
+    }
+    
+    public synchronized boolean insertData(int[] value) {
+        return data.appendDataRow(value);
     }
 
     public synchronized boolean setData(int row, int column, int value) {
@@ -71,4 +85,16 @@ public class GraphBuffer implements GraphBufferInterface {
     public int last() {
         return data.lastRow()[0];
     }
+
+	public int getColumns() {
+		return data.getColumns();
+	}
+	
+	public DataBuffer getDataBuffer() {
+		return data;
+	}
+
+	public void setDataBuffer(DataBuffer dataBuffer) {
+		data = dataBuffer;
+	}
 }
